@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Microsoft.Extensions.Logging;
+using System.Text;
 using TaskAPI.Core.Entities;
 using TaskAPI.Core.Interfaces;
 
@@ -6,9 +7,13 @@ namespace TaskAPI.BusinessLogic.Repositories {
     public class UserService : IUserService {
 
         private readonly IDbContext _context;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(IDbContext context) {
+        public UserService(IDbContext context, ILogger<UserService> logger) {
+            
             _context = context;
+            _logger = logger;
+
         }
         public async Task<UserModel> AddNewUser(UserModel user) {
 
@@ -23,6 +28,8 @@ namespace TaskAPI.BusinessLogic.Repositories {
                     , user);
             }
 
+            _logger.LogError("{user} username already exists",user.Username);
+
             return null;
 
         }
@@ -30,10 +37,15 @@ namespace TaskAPI.BusinessLogic.Repositories {
         public async Task DeleteUser(string username) {
 
             await _context.DeleteUser("delete from users where Username = @username", username);
+
+            _logger.LogWarning("{user} deleted",username);
+
         }
 
         public Task<IEnumerable<UserModel>> GetAllUsers() {
+
             return _context.GetAllObjects<UserModel>("select * from users");
+
         }
 
         public async Task<UserModel> GetUserByUsername(string username) {
@@ -50,6 +62,8 @@ namespace TaskAPI.BusinessLogic.Repositories {
 
             string query = "update users set Name = @Name, Age = @Age, Role = @Role, Password = @Password where Username = @Username";
             await _context.UpdateObject<UserModel>(query, model);
+
+            _logger.LogInformation("{user} updated",model.Username);
 
         }
     }

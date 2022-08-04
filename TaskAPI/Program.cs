@@ -1,10 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using TaskAPI.BusinessLogic.AuthServices;
-using TaskAPI.BusinessLogic.Repositories;
-using TaskAPI.Core.Interfaces;
-using TaskAPI.Infrastructure.Data;
+using TaskAPI.Web.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,25 +10,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Configure Authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options => {
-        options.TokenValidationParameters = new TokenValidationParameters {
-
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-
-        };
-    });
+builder.Services.AddJwtAuthConfiguration(builder.Configuration["Jwt:Issuer"], builder.Configuration["Jwt:Audience"], builder.Configuration["Jwt:Key"]);
 
 // Configure Services
-builder.Services.AddScoped<IDbContext, DbService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddAllServices();
 
 // CORS Configuration
 builder.Services.AddCors(cors => {
