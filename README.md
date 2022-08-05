@@ -3,12 +3,12 @@ TaskAPI in clean architecture
 
 This is a simple REST API that uses clean architecture with JWT authentication.
 
-# Used Technologies
+## Used Technologies
 1. ASP.NET (DOT NET 6)
 2. PostgreSql
 3. Dapper
 
-# Create Database Tables
+## Create Database Tables
 
   1. Products Table - product_id, product_name, product_description, product_price
   2. Users Table - username, name, age, role, password
