@@ -12,5 +12,6 @@ namespace TaskAPI.Core.Interfaces {
         public string GenerateAccessToken(UserModel model);
         public string GenerateRefreshToken(UserModel model);
         public Task<string> RegenerateAccessToken(string refresh_token);
+        public LoggedUser GetLoggedUser(string acces_token);
     }
 }

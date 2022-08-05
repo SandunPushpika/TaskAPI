@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TaskAPI.BusinessLogic.AuthServices;
 using TaskAPI.BusinessLogic.Repositories;
+using TaskAPI.BusinessLogic.Services;
 using TaskAPI.Core.Interfaces;
 using TaskAPI.Infrastructure.Data;
 
@@ -36,6 +37,7 @@ namespace TaskAPI.Web.Configurations {
             service.AddScoped<IDbContext, DbService>();
             service.AddScoped<IUserService, UserService>();
             service.AddScoped<IAuthService, AuthService>();
+            service.AddScoped<IProductService, ProductService>();
 
         }
     }

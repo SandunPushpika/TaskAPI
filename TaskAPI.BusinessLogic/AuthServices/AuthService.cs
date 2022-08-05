@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,12 +11,14 @@ using TaskAPI.Core.Interfaces;
 namespace TaskAPI.BusinessLogic.AuthServices {
     public class AuthService : IAuthService {
 
-        private IConfiguration _config;
-        private IUserService _service;
+        private readonly IConfiguration _config;
+        private readonly IUserService _service;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IConfiguration config, IUserService service) {
+        public AuthService(IConfiguration config, IUserService service, ILogger<AuthService> logger) {
             _config = config;
             _service = service;
+            _logger = logger;
         }
 
         public async Task<UserModel> Authenticate(UserLogin login) {
@@ -82,17 +85,44 @@ namespace TaskAPI.BusinessLogic.AuthServices {
         public async Task<string> RegenerateAccessToken(string refresh_token) {
 
             var handler = new JwtSecurityTokenHandler();
-            var securityToken = handler.ReadToken(refresh_token) as JwtSecurityToken;
+            try {
 
-            var username = securityToken.Claims.First(claim => claim.Type == "Username").Value;
+                var securityToken = handler.ReadToken(refresh_token) as JwtSecurityToken;
 
-            var user = await _service.GetUserByUsername(username);
+                var username = securityToken.Claims.First(claim => claim.Type == "Username").Value;
 
-            if (user == null) {
+                var user = await _service.GetUserByUsername(username);
+
+                if (user == null) {
+                    return null;
+                }
+
+                return GenerateAccessToken(user);
+
+            } catch (Exception ex) {
+                
+                _logger.LogError(ex, "Invalid Token Passed to RegenerateAccessToken(string refresh_token)");
+                return "";
+            } 
+
+        }
+
+        public LoggedUser GetLoggedUser(string acces_token) {
+
+            var handler = new JwtSecurityTokenHandler();
+            try {
+
+                var token = handler.ReadToken(acces_token) as JwtSecurityToken;
+
+                var username = token.Claims.First(claim => claim.Type == "Username").Value;
+                var role = token.Claims.First(claim => claim.Type == ClaimTypes.Role).Value;
+
+                return new LoggedUser { Username = username, Role = role };
+
+            } catch (Exception ex) {
+                _logger.LogError(ex, "Invalid Jwt Token");
                 return null;
             }
-
-            return GenerateAccessToken(user);
 
         }
     }

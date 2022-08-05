@@ -39,5 +39,23 @@ namespace TaskAPI.Infrastructure.Data {
         public async Task<IEnumerable<TObject>> GetAllObjects<TObject>(string query) {
             return await con.QueryAsync<TObject>(query);
         }
+
+        public async Task DeleteById(string query, int id) {
+            await con.ExecuteAsync(query, new { id });
+        }
+
+        public async Task<T> GetObjectById<T>(string query, int id) {
+            try {
+                
+                return await con.QuerySingleAsync<T>(query, new { id });
+                
+            } catch (Exception ex) {
+                return default(T);
+            }
+        }
+
+        public async Task<IEnumerable<TObject>> GetAllObjects<TObject>(string query, string parameter) {
+            return await con.QueryAsync<TObject>(query, new { parameter });
+        }
     }
 }

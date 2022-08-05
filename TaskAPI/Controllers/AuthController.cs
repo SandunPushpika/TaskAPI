@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TaskAPI.Core.DTOs;
 using TaskAPI.Core.Interfaces;
 
@@ -36,11 +37,30 @@ namespace TaskAPI.Web.Controllers {
 
             var newToken = await _service.RegenerateAccessToken(refreshToken);
 
-            if (newToken == null) {
-                return NotFound("Username not found!");
+            if (newToken.Equals("")) {
+                return BadRequest("Invalid Token");
             }
 
             return Ok(new AuthResponse { AccessToken = newToken, RefreshToken = refreshToken });
+        }
+
+        [HttpGet("loggeduser")]
+        [AllowAnonymous]
+        public IActionResult GetLoggedUser([FromHeader(Name = "Authorization")] string access_token) {
+
+            if (access_token == null && !access_token.Contains("Bearer")) {
+                return BadRequest("Authorization not found!");
+            }
+
+            access_token = access_token.Replace("Bearer","").Trim();
+
+            var logged_user = _service.GetLoggedUser(access_token);
+            
+            if (logged_user == null) {
+                return BadRequest("Invalid Token!");    
+            }
+
+            return Ok(logged_user);
         }
     }
 }
