@@ -20,18 +20,19 @@ namespace TaskAPI.BusinessLogic.Services {
 
         }
 
-        public async Task DeleteProduct(int id) {
+        public async Task<Boolean> DeleteProduct(int id) {
 
             var model = await GetProductById(id);
 
             if (model == null) {
                 _logger.LogError(new Exception("Id not found"), "{id} not found", id);
-                return;
+                return false;
             }
             
             string query = "delete from products where product_id = @id";
             await _context.DeleteById(query, id);
 
+            return true;
         }
 
         public async Task<IEnumerable<ProductModel>> GetAllProducts() {
@@ -60,13 +61,13 @@ namespace TaskAPI.BusinessLogic.Services {
 
         }
 
-        public async Task UpdateProduct(ProductModel product, int id) {
+        public async Task<Boolean> UpdateProduct(ProductModel product, int id) {
 
             var model = await GetProductById(id);
 
             if (model == null) {
                 _logger.LogError(new Exception("Id not found"), "{id} not found", id);
-                return;
+                return false;
             }
 
             product.product_id = id;
@@ -74,6 +75,7 @@ namespace TaskAPI.BusinessLogic.Services {
             string query = "update products set product_name = @product_name, product_description = @product_description, product_price = @product_price where product_id=@product_id";
             await _context.UpdateObject(query,product);
 
+            return true;
         }
     }
 }

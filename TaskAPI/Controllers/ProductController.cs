@@ -29,7 +29,11 @@ namespace TaskAPI.Web.Controllers {
         [HttpGet("{id}")]
         [Authorize(Roles = "ADMIN,GUEST")]
         public async Task<ActionResult<ProductModel>> GetProductById(int id) {
-            return Ok(await _service.GetProductById(id));
+            var product = await _service.GetProductById(id);
+
+            if(product == null) return NotFound("Product Not Found!");
+            
+            return Ok(product);
         }
 
         [HttpPost]
@@ -42,14 +46,20 @@ namespace TaskAPI.Web.Controllers {
         [HttpPut("{id}")]
         [Authorize(Roles = "ADMIN")]
         public async Task<ActionResult> UpdateProduct(ProductModel model, int id) {
-            await _service.UpdateProduct(model, id);
+            var res = await _service.UpdateProduct(model, id);
+            
+            if(res == false) return NotFound("Id Not Found!");
+            
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "ADMIN")]
         public async Task<ActionResult> DeleteProduct(int id) { 
-            await _service.DeleteProduct(id);
+            var res = await _service.DeleteProduct(id);
+
+            if (res == false) return NotFound("Id Not Found!");
+
             return NoContent();
         }
 

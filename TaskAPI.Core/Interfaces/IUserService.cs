@@ -10,7 +10,7 @@ namespace TaskAPI.Core.Interfaces {
         public Task<UserModel> AddNewUser(UserModel model);
         public Task<IEnumerable<UserModel>> GetAllUsers();
         public Task<UserModel> GetUserByUsername(string username);
-        public Task UpdateUser(UserModel model);
-        public Task DeleteUser(string username);
+        public Task<UserModel> UpdateUser(UserModel model);
+        public Task<UserModel> DeleteUser(int userid);
     }
 }

@@ -34,11 +34,17 @@ namespace TaskAPI.BusinessLogic.Repositories {
 
         }
 
-        public async Task DeleteUser(string username) {
+        public async Task<UserModel> DeleteUser(int userid) {
 
-            await _context.DeleteUser("delete from users where Username = @username", username);
+            var user = await _context.GetObjectById<UserModel>("Select * from users where id = @id", userid);
 
-            _logger.LogWarning("{user} deleted",username);
+            if (user == null) return null;
+
+            await _context.DeleteById("delete from users where id = @id", userid);
+
+            _logger.LogWarning("{user} deleted",userid);
+
+            return user;
 
         }
 
@@ -56,15 +62,21 @@ namespace TaskAPI.BusinessLogic.Repositories {
             return user;
         }
 
-        public async Task UpdateUser(UserModel model) {
+        public async Task<UserModel> UpdateUser(UserModel model) {
+
+            var user = await _context.GetObjectById<UserModel>("Select * from users where Id=@Id",model.Id);
+
+            if (user == null) {
+                return null;
+            }
 
             model.Password = Convert.ToBase64String(Encoding.UTF8.GetBytes(model.Password));
 
-            string query = "update users set Name = @Name, Age = @Age, Role = @Role, Password = @Password where Username = @Username";
+            string query = "update users set Username = @Username, Name = @Name, Age = @Age, Role = @Role, Password = @Password where Id = @Id";
             await _context.UpdateObject<UserModel>(query, model);
 
             _logger.LogInformation("{user} updated",model.Username);
-
+            return model;
         }
     }
 }

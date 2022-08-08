@@ -11,9 +11,9 @@ namespace TaskAPI.Core.Interfaces {
 
         public Task<IEnumerable<ProductModel>> GetProductsByName(string name);
 
-        public Task UpdateProduct(ProductModel product, int id);
+        public Task<Boolean> UpdateProduct(ProductModel product, int id);
 
-        public Task DeleteProduct(int id);
+        public Task<Boolean> DeleteProduct(int id);
 
     }
 }

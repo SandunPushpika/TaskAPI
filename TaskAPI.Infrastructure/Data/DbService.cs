@@ -50,6 +50,7 @@ namespace TaskAPI.Infrastructure.Data {
                 return await con.QuerySingleAsync<T>(query, new { id });
                 
             } catch (Exception ex) {
+
                 return default(T);
             }
         }

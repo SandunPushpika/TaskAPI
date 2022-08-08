@@ -50,16 +50,23 @@ namespace TaskAPI.Web.Controllers {
         [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> UpdateUser(UserModel user) {
 
-            await _service.UpdateUser(user);
+           var updatedUser = await _service.UpdateUser(user);
+
+            if (updatedUser == null) {
+                return NotFound("User id is wrong!");
+            }
 
             return NoContent();
         }
 
-        [HttpDelete("/{username}")]
+        [HttpDelete("{userid}")]
         [Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> DeleteUser(string username) {
+        public async Task<IActionResult> DeleteUser(int userid) {
 
-            await _service.DeleteUser(username);
+            var user = await _service.DeleteUser(userid);
+
+            if (user == null) return NotFound("Invalid User Id!");
+
             return NoContent();
 
         }
