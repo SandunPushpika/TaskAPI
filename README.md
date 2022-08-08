@@ -11,6 +11,6 @@ This is a simple REST API that uses clean architecture with JWT authentication.
 ## Create Database Tables
 
   1. Products Table - product_id, product_name, product_description, product_price
-  2. Users Table - username, name, age, role, password
+  2. Users Table - id, username, name, age, role, password
  
  Change the connection string in "appsettings.json" according to the database.
