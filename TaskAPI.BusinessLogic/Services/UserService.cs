@@ -8,11 +8,13 @@ namespace TaskAPI.BusinessLogic.Repositories {
 
         private readonly IDbContext _context;
         private readonly ILogger<UserService> _logger;
+        private readonly IPasswordEncryptor _encryptor;
 
-        public UserService(IDbContext context, ILogger<UserService> logger) {
-            
+        public UserService(IDbContext context, ILogger<UserService> logger, IPasswordEncryptor encryptor) {
+
             _context = context;
             _logger = logger;
+            _encryptor = encryptor;
 
         }
         public async Task<UserModel> AddNewUser(UserModel user) {
@@ -21,7 +23,7 @@ namespace TaskAPI.BusinessLogic.Repositories {
 
             if (check == null) {
 
-                user.Password = Convert.ToBase64String(Encoding.UTF8.GetBytes(user.Password));
+                user.Password = _encryptor.HashPassword(user.Password);
 
                 return await _context.AddObject<UserModel>(
                     "insert into users (Username,Name,Age,Role,Password) values (@Username,@Name,@Age,@Role,@Password)"
@@ -70,7 +72,7 @@ namespace TaskAPI.BusinessLogic.Repositories {
                 return null;
             }
 
-            model.Password = Convert.ToBase64String(Encoding.UTF8.GetBytes(model.Password));
+            model.Password = _encryptor.HashPassword(model.Password);
 
             string query = "update users set Username = @Username, Name = @Name, Age = @Age, Role = @Role, Password = @Password where Id = @Id";
             await _context.UpdateObject<UserModel>(query, model);

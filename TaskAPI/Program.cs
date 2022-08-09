@@ -16,11 +16,7 @@ builder.Services.AddJwtAuthConfiguration(builder.Configuration["Jwt:Issuer"], bu
 builder.Services.AddAllServices();
 
 // CORS Configuration
-builder.Services.AddCors(cors => {
-    cors.AddDefaultPolicy(policy => {
-        policy.AllowAnyOrigin();
-    });
-});
+builder.Services.ConfigureCustomCORS();
 
 var app = builder.Build();
 

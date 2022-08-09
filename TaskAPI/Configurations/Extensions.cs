@@ -7,6 +7,7 @@ using TaskAPI.BusinessLogic.Repositories;
 using TaskAPI.BusinessLogic.Services;
 using TaskAPI.Core.Interfaces;
 using TaskAPI.Infrastructure.Data;
+using TaskAPI.Infrastructure.Services;
 
 namespace TaskAPI.Web.Configurations {
     public static class Extensions {
@@ -38,6 +39,20 @@ namespace TaskAPI.Web.Configurations {
             service.AddScoped<IUserService, UserService>();
             service.AddScoped<IAuthService, AuthService>();
             service.AddScoped<IProductService, ProductService>();
+            service.AddScoped<IPasswordEncryptor, PasswordEncryptor>();
+
+        }
+
+        public static void ConfigureCustomCORS(this IServiceCollection service) {
+
+            service.AddCors(cors => {
+                cors.AddDefaultPolicy(policy => {
+                    policy.AllowAnyOrigin();
+                    policy.AllowAnyHeader();
+                    policy.AllowAnyMethod();
+                    policy.AllowCredentials();
+                });
+            });
 
         }
     }

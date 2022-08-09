@@ -14,11 +14,13 @@ namespace TaskAPI.BusinessLogic.AuthServices {
         private readonly IConfiguration _config;
         private readonly IUserService _service;
         private readonly ILogger<AuthService> _logger;
+        private readonly IPasswordEncryptor _passwordEncryptor;
 
-        public AuthService(IConfiguration config, IUserService service, ILogger<AuthService> logger) {
+        public AuthService(IConfiguration config, IUserService service, ILogger<AuthService> logger, IPasswordEncryptor passwordEncryptor) {
             _config = config;
             _service = service;
             _logger = logger;
+            _passwordEncryptor = passwordEncryptor;
         }
 
         public async Task<UserModel> Authenticate(UserLogin login) {
@@ -26,15 +28,16 @@ namespace TaskAPI.BusinessLogic.AuthServices {
             var user = await _service.GetUserByUsername(login.Username);
 
             if (user == null) {
+                _logger.LogInformation("User is null here!");
                 return null;
             }
 
-            var EnPass = Convert.ToBase64String(Encoding.UTF8.GetBytes(login.Password));
-
-            if (EnPass.Equals(user.Password)) {
+            if (_passwordEncryptor.ComparePasswords(login.Password, user.Password)) {
+                _logger.LogInformation("Password matches");
                 return user;
             }
 
+            _logger.LogInformation("Password does not match!");
             return null;
         }
 
