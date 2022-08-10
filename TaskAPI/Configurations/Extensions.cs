@@ -8,6 +8,7 @@ using TaskAPI.BusinessLogic.Services;
 using TaskAPI.Core.Interfaces;
 using TaskAPI.Infrastructure.Data;
 using TaskAPI.Infrastructure.Services;
+using TaskAPI.Web.Configurations.Middlewares;
 
 namespace TaskAPI.Web.Configurations {
     public static class Extensions {
@@ -53,6 +54,13 @@ namespace TaskAPI.Web.Configurations {
                     policy.AllowCredentials();
                 });
             });
+
+        }
+
+        public static void ConfigureCustomMiddlewares(this IApplicationBuilder builder) {
+
+            builder.UseMiddleware<NotFoundMiddleware>();
+            builder.UseMiddleware<ExceptionMiddleware>();
 
         }
     }

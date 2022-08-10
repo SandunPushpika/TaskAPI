@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Text;
 using TaskAPI.Core.Entities;
+using TaskAPI.Core.Helpers;
 using TaskAPI.Core.Interfaces;
 
 namespace TaskAPI.BusinessLogic.Repositories {
@@ -25,9 +26,15 @@ namespace TaskAPI.BusinessLogic.Repositories {
 
                 user.Password = _encryptor.HashPassword(user.Password);
 
-                return await _context.AddObject<UserModel>(
-                    "insert into users (Username,Name,Age,Role,Password) values (@Username,@Name,@Age,@Role,@Password)"
-                    , user);
+                string query = new FluentQueryBuilder()
+                    .InsertInto("users")
+                    .Add(true ,"Username" ,"Name" ,"Age" ,"Role" ,"Password")
+                    .Values("@Username", "@Name", "@Age", "@Role", "@Password")
+                    .Build();
+
+                _logger.LogInformation("Query: {query}",query);
+
+                return await _context.AddObject<UserModel>(query ,user);
             }
 
             _logger.LogError("{user} username already exists",user.Username);
@@ -38,12 +45,22 @@ namespace TaskAPI.BusinessLogic.Repositories {
 
         public async Task<UserModel> DeleteUser(int userid) {
 
-            var user = await _context.GetObjectById<UserModel>("Select * from users where id = @id", userid);
-
+            string selectQuery = new FluentQueryBuilder()
+                .SelectAll()
+                .From("users")
+                .Where("id","@id","=")
+                .Build();
+            var user = await _context.GetObjectById<UserModel>(selectQuery, userid);
+            
             if (user == null) return null;
 
-            await _context.DeleteById("delete from users where id = @id", userid);
+            string deleteQuery = new FluentQueryBuilder()
+                .Delete()
+                .From("users")
+                .Where("id", "@id", "=")
+                .Build();
 
+            await _context.DeleteById(deleteQuery, userid);
             _logger.LogWarning("{user} deleted",userid);
 
             return user;
@@ -52,7 +69,7 @@ namespace TaskAPI.BusinessLogic.Repositories {
 
         public Task<IEnumerable<UserModel>> GetAllUsers() {
 
-            return _context.GetAllObjects<UserModel>("select * from users");
+            return _context.GetAllObjects<UserModel>(new FluentQueryBuilder().SelectAll().From("users").Build());
 
         }
 
@@ -66,7 +83,13 @@ namespace TaskAPI.BusinessLogic.Repositories {
 
         public async Task<UserModel> UpdateUser(UserModel model) {
 
-            var user = await _context.GetObjectById<UserModel>("Select * from users where Id=@Id",model.Id);
+            string selectQuery = new FluentQueryBuilder()
+                .SelectAll()
+                .From("users")
+                .Where("id", "@id", "=")
+                .Build();
+
+            var user = await _context.GetObjectById<UserModel>(selectQuery, model.Id);
 
             if (user == null) {
                 return null;
@@ -74,8 +97,13 @@ namespace TaskAPI.BusinessLogic.Repositories {
 
             model.Password = _encryptor.HashPassword(model.Password);
 
-            string query = "update users set Username = @Username, Name = @Name, Age = @Age, Role = @Role, Password = @Password where Id = @Id";
-            await _context.UpdateObject<UserModel>(query, model);
+            string updateQuery = new FluentQueryBuilder()
+                .Update("users")
+                .Add(false, "Username = @Username", "Name = @Name", "Age = @Age", "Role = @Role", "Password = @Password")
+                .Where("ID", "@Id", "=")
+                .Build();
+        
+            await _context.UpdateObject<UserModel>(updateQuery, model);
 
             _logger.LogInformation("{user} updated",model.Username);
             return model;
