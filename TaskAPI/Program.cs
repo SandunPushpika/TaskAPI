@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+using TaskAPI.Web.Attributes;
 using TaskAPI.Web.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);

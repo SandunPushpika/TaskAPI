@@ -49,7 +49,8 @@ namespace TaskAPI.BusinessLogic.AuthServices {
             var claims = new[] {
                 new Claim("Username", model.Username),
                 new Claim(ClaimTypes.Role, model.Role),
-                new Claim(ClaimTypes.Name, model.Name)
+                new Claim(ClaimTypes.Name, model.Name),
+                new Claim("Age", model.Age.ToString()),
             };
 
             var access_token = new JwtSecurityToken(

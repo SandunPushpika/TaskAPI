@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
+﻿using Microsoft.AspNetCore.Mvc;
 using TaskAPI.Core.Entities;
 using TaskAPI.Core.Interfaces;
 using TaskAPI.Web.Attributes;
@@ -26,7 +24,7 @@ namespace TaskAPI.Web.Controllers {
         }
 
         [HttpGet("{username}")]
-        [Authorize(Roles = "ADMIN,GUEST")]
+        [AuthorizeByRole("ADMIN","GUEST")]
         public async Task<IActionResult> GetUserByUsername(string username) {
 
             var user = await _service.GetUserByUsername(username);
@@ -49,7 +47,7 @@ namespace TaskAPI.Web.Controllers {
         }
 
         [HttpPut]
-        [Authorize(Roles = "ADMIN")]
+        [AuthorizeByRole("ADMIN")]
         public async Task<IActionResult> UpdateUser(UserModel user) {
 
            var updatedUser = await _service.UpdateUser(user);
@@ -62,7 +60,7 @@ namespace TaskAPI.Web.Controllers {
         }
 
         [HttpDelete("{userid}")]
-        [Authorize(Roles = "ADMIN")]
+        [AuthorizeByRole("ADMIN")]
         public async Task<IActionResult> DeleteUser(int userid) {
 
             var user = await _service.DeleteUser(userid);
