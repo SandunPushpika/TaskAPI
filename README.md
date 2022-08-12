@@ -40,7 +40,7 @@ This is a simple REST API that uses clean architecture with JWT authentication.
      * (DELETE) {url}/api/products/{product id} - delete products
   
  ## Models
-   1. User model
+    1. User model
         
         {
           "id": 0,
@@ -51,7 +51,7 @@ This is a simple REST API that uses clean architecture with JWT authentication.
           "password": "string"
         }
         
-    2. Products
+    2. Product model
         
       {
         "product_id": 0,
@@ -60,7 +60,7 @@ This is a simple REST API that uses clean architecture with JWT authentication.
         "product_price": 0
       }
       
-    3. Login
+    3. Login model
         
         {
           "username": "string",
