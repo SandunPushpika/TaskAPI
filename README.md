@@ -38,5 +38,33 @@ This is a simple REST API that uses clean architecture with JWT authentication.
      * (POST) {url}/api/products - add a product to the DB
      * (PUT) {url}/api/products/{product id} - update the products
      * (DELETE) {url}/api/products/{product id} - delete products
-
+  
+ ## Models
+   1. User model
+        
+        {
+          "id": 0,
+          "username": "string",
+          "name": "string",
+          "age": 0,
+          "role": "string",
+          "password": "string"
+        }
+        
+    2. Products
+        
+      {
+        "product_id": 0,
+        "product_name": "string",
+        "product_description": "string",
+        "product_price": 0
+      }
+      
+    3. Login
+        
+        {
+          "username": "string",
+          "password": "string"
+        }
+### NOTE : All Ids are set to auto incremented
      
