@@ -16,6 +16,7 @@ namespace TaskAPI.Web.Controllers {
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllUsers() {
 
             var res = await _service.GetAllUsers();
