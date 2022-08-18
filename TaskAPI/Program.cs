@@ -17,12 +17,14 @@ builder.Services.AddAllServices();
 
 // CORS Configuration
 builder.Services.AddCors(cors => {
-    cors.AddDefaultPolicy(policy => {
-        policy.AllowAnyOrigin();
-        policy.AllowAnyHeader();
-        policy.AllowAnyMethod();
-        policy.AllowCredentials();
-    });
+    cors.AddPolicy("AllowedCorsOrigins",
+                builder => {
+                    builder
+                        .SetIsOriginAllowed(_ => true)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
 });
 
 var app = builder.Build();
