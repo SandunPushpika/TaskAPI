@@ -43,7 +43,7 @@ namespace TaskAPI.Web.Controllers {
                 return Conflict("User Already Exists!");
             }
 
-            return Created($"/{res.Username}", res);
+            return Created("","User registered successfully!");
 
         }
 
