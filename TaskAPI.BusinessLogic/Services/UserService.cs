@@ -24,6 +24,7 @@ namespace TaskAPI.BusinessLogic.Repositories {
             if (check == null) {
 
                 user.Password = _encryptor.HashPassword(user.Password);
+                user.Role = user.Role.ToUpper();
 
                 return await _context.AddObject<UserModel>(
                     "insert into users (Username,Name,Age,Role,Password) values (@Username,@Name,@Age,@Role,@Password)"
